@@ -19,18 +19,23 @@ var connection = mysql.createConnection({
 });
 
 var theQuery = `
-SELECT Account.id, Account.email, AddressBook.name
-FROM Account
-JOIN AddressBook
-ON Account.id = AddressBook.accountId;
+ SELECT Account.id, Account.email, GROUP_CONCAT(AddressBook.name) AS n
+  FROM Account
+  INNER JOIN AddressBook
+  ON Account.id = AddressBook.accountId
+  GROUP BY Account.id;
 `
 
 connection.query(theQuery, function(err, rows, fields) {
     if (err) console.log(err.stack);
     else {
         rows.forEach(function(row) {
-            console.log('#' + row.id + ': ' + row.email);
-            console.log('    ' + row.name);
+            var splitNames = row.n.split(',');
+            console.log('#' + row.id + ': ' + row.email);  
+            
+            for(var i = 0; i < splitNames.length; i++) {
+                console.log(splitNames[i]);
+            }
             console.log('');
         });
     }

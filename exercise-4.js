@@ -17,23 +17,30 @@ var connection = mysql.createConnection({
   database : 'addressbook'
 });
 
-var theQuery = 
-`
-SELECT Account.id, Account.email, AddressBook.name
-FROM Account
-LEFT JOIN AddressBook
-ON Account.id = AddressBook.accountId;
+var theQuery = `
+ SELECT Account.id, Account.email, GROUP_CONCAT(AddressBook.name) AS n
+  FROM Account
+  LEFT JOIN AddressBook
+  ON Account.id = AddressBook.accountId
+  GROUP BY Account.id;
 `
 
 connection.query(theQuery, function(err, rows, fields) {
     if (err) console.log(err.stack);
     else {
         rows.forEach(function(row) {
-            if(row.name === null) row.name = '-no addressbooks-';
-            console.log('#' + row.id + ': ' + row.email);
-            console.log('    ' + row.name);
+            if(row.n === null) row.n = '-no addressbooks-';
+            
+            var splitNames = row.n.split(',');
+            
+            console.log('#' + row.id + ': ' + row.email);  
+            
+            for(var i = 0; i < splitNames.length; i++) {
+                console.log(splitNames[i]);
+            }
             console.log('');
         });
     }
     connection.end();
 });
+
