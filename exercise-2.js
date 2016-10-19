@@ -17,14 +17,8 @@ connection.query("SELECT id, email FROM Account LIMIT 5", function(err, rows, fi
   if (err) console.log(err.stack);
   else {
   rows.forEach(function(row) {
-    var res = row.email.toString().bold;
-    console.log('#' + row.id + ': ' + res);
+    console.log('#' + row.id + ': ' + row.email.bold);
   });
-  // This code will output lines like:
-  // #1: john@smith.com
-  // #2: abc@def.com
-  // #5: xx@yy.com
   }
   connection.end();
-  // Note that IDs do not have to be contiguous. If we DELETE rows, there will be holes in the ID list. This is normal.
 });
